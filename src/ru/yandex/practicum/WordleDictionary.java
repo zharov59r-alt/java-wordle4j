@@ -22,4 +22,8 @@ public class WordleDictionary {
         return words.get(rand.nextInt(words.size()));
     }
 
+    public boolean checkWord(String word) {
+        return words.contains(word);
+    }
+
 }

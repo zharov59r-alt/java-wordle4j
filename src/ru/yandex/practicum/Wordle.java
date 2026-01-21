@@ -1,9 +1,12 @@
 package ru.yandex.practicum;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 /*
 в главном классе нам нужно:
@@ -16,9 +19,12 @@ import java.nio.file.Paths;
  */
 public class Wordle {
 
+    public static final String logFileName = "log.txt";
+    public static final String dictionaryFileName = "words_ru.txt";
+
     public static void main(String[] args) {
 
-        Path logFile = Paths.get("log.txt");
+        Path logFile = Paths.get(logFileName);
 
         if (!Files.exists(logFile)) {
             try {
@@ -28,7 +34,21 @@ public class Wordle {
             }
         }
 
-        
+        try (PrintWriter logFileWriter = new PrintWriter( logFileName )) {
+
+            try {
+                WordleDictionaryLoader wordleDictionaryLoader = new WordleDictionaryLoader();
+                WordleDictionary wordleDictionary = wordleDictionaryLoader.Loader(dictionaryFileName);
+                WordleGame wordleGame = new WordleGame(wordleDictionary);
+                wordleGame.run(logFileWriter);
+
+            } catch (Exception e) {
+                logFileWriter.write(e.getMessage());
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
