@@ -1,5 +1,10 @@
 package ru.yandex.practicum;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /*
 в главном классе нам нужно:
     создать лог-файл (он должен передаваться во все классы)
@@ -12,6 +17,18 @@ package ru.yandex.practicum;
 public class Wordle {
 
     public static void main(String[] args) {
+
+        Path logFile = Paths.get("log.txt");
+
+        if (!Files.exists(logFile)) {
+            try {
+                Files.createFile(logFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        
 
     }
 

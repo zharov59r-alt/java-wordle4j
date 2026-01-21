@@ -20,4 +20,23 @@ public class WordleGame {
 
     private WordleDictionary dictionary;
 
+    public WordleGame(WordleDictionary dictionary) {
+        this.dictionary = dictionary;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
+    public int getSteps() {
+        return steps;
+    }
+
+    public void setSteps(int steps) {
+        this.steps = steps;
+    }
 }
