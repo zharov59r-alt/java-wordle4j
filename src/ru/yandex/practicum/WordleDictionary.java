@@ -1,5 +1,7 @@
 package ru.yandex.practicum;
 
+import ru.yandex.practicum.logger.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -12,9 +14,26 @@ import java.util.Random;
 public class WordleDictionary {
 
     private List<String> words = new ArrayList<>();
+    private Logger logger;
+
+    public WordleDictionary(Logger logger) {
+        this.logger = logger;
+    }
 
     public void add(String word) {
         words.add(word);
+    }
+
+    public String get(int index) {
+        return words.get(index);
+    }
+
+    public List<String> getAllWords() {
+        return words;
+    }
+
+    public boolean isEmpty() {
+        return words.isEmpty();
     }
 
     public String getRandomWord() {
@@ -22,8 +41,9 @@ public class WordleDictionary {
         return words.get(rand.nextInt(words.size()));
     }
 
-    public boolean checkWord(String word) {
+    public boolean wordExistsInDict(String word) {
         return words.contains(word);
     }
+
 
 }

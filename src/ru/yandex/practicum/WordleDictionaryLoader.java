@@ -1,9 +1,15 @@
 package ru.yandex.practicum;
 
+import ru.yandex.practicum.exception.SystemException;
+import ru.yandex.practicum.logger.Logger;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /*
 этот класс содержит в себе всю рутину по работе с файлами словарей и с кодировками
@@ -12,11 +18,22 @@ import java.nio.charset.StandardCharsets;
  */
 public class WordleDictionaryLoader {
 
-    public WordleDictionary Loader(String fileName) {
+    public static final String DICTIONARY_FILE_NAME = "words_ru.txt";
+    private Logger logger;
 
-        WordleDictionary wordleDictionary = new WordleDictionary();
+    public WordleDictionaryLoader(Logger logger) {
+        this.logger = logger;
+    }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName, StandardCharsets.UTF_8))) {
+    public WordleDictionary load() throws IOException, SystemException {
+
+        WordleDictionary wordleDictionary = new WordleDictionary(logger);
+
+        Path path = Paths.get(DICTIONARY_FILE_NAME);
+
+        if (!Files.exists(path)) throw new SystemException("Файл словаря отсутствует");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(DICTIONARY_FILE_NAME, StandardCharsets.UTF_8))) {
             String line;
 
 			while ((line = reader.readLine()) != null) {
@@ -25,9 +42,9 @@ public class WordleDictionaryLoader {
                 }
 
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
+
+        if (wordleDictionary.isEmpty()) throw new SystemException("Словарь пуст");
 
         return wordleDictionary;
     }

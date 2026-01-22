@@ -1,11 +1,10 @@
 package ru.yandex.practicum;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import ru.yandex.practicum.exception.GameException;
+import ru.yandex.practicum.exception.SystemException;
+import ru.yandex.practicum.logger.GameLogger;
+import ru.yandex.practicum.logger.Logger;
+
 import java.util.Scanner;
 
 /*
@@ -19,35 +18,63 @@ import java.util.Scanner;
  */
 public class Wordle {
 
-    public static final String logFileName = "log.txt";
-    public static final String dictionaryFileName = "words_ru.txt";
+    public static void main(String[] args) throws Exception {
 
-    public static void main(String[] args) {
-
-        Path logFile = Paths.get(logFileName);
-
-        if (!Files.exists(logFile)) {
-            try {
-                Files.createFile(logFile);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        try (PrintWriter logFileWriter = new PrintWriter( logFileName )) {
+        try (Logger logger = new GameLogger()) {
 
             try {
-                WordleDictionaryLoader wordleDictionaryLoader = new WordleDictionaryLoader();
-                WordleDictionary wordleDictionary = wordleDictionaryLoader.Loader(dictionaryFileName);
-                WordleGame wordleGame = new WordleGame(wordleDictionary);
-                wordleGame.run(logFileWriter);
+                WordleDictionaryLoader wordleDictionaryLoader = new WordleDictionaryLoader(logger);
+                WordleDictionary wordleDictionary = wordleDictionaryLoader.load();
+                WordleGame wordleGame = new WordleGame(wordleDictionary, logger, 6);
 
+                Scanner scanner = new Scanner(System.in);
+
+                while (true) {
+
+                    try {
+                        String input = scanner.nextLine().toLowerCase().replace("ё", "е");
+
+                        if (input.isEmpty()) {
+                            input = wordleGame.getHint();
+                            System.out.println(input);
+                        } else {
+                            if (input.length() != 5) throw new GameException("Слово должно состоять из пяти букв");
+                            if (!input.matches("^[а-яА-ЯёЁ]+$"))
+                                throw new GameException("Слово должно состоять из букв русского языка");
+                            if (!wordleGame.checkWordExistsInDictionary(input))
+                                throw new GameException("Введенное слово отсутствует в словаре");
+                            if (wordleGame.checkWordHasAlreadyBeen(input))
+                                throw new GameException("Введенное слово уже было");
+                        }
+
+                        wordleGame.setAnswer(input);
+
+                        if (wordleGame.answerIsRight()) {
+                            System.out.println("Вы выйграли!");
+                            break;
+                        }
+
+                        System.out.println(wordleGame.doStep());
+
+                        if (!wordleGame.existsStep()) {
+                            System.out.println("Вы проиграли! Правильный ответ: " + wordleGame.getRigthAnswer());
+                            break;
+                        }
+
+                    } catch (GameException e) {
+                        System.out.println(e.getMessage());
+                    }
+
+                }
+
+            } catch (SystemException e) {
+                logger.log(e.getMessage());
             } catch (Exception e) {
-                logFileWriter.write(e.getMessage());
+                for (StackTraceElement ste : e.getStackTrace()) {
+                    logger.log(ste.toString());
+                }
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
 
     }
