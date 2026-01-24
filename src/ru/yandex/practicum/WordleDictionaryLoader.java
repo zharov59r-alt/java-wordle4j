@@ -31,7 +31,9 @@ public class WordleDictionaryLoader {
 
         Path path = Paths.get(DICTIONARY_FILE_NAME);
 
-        if (!Files.exists(path)) throw new SystemException("Файл словаря отсутствует");
+        if (!Files.exists(path)) {
+            throw new SystemException("Файл словаря отсутствует");
+        }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(DICTIONARY_FILE_NAME, StandardCharsets.UTF_8))) {
             String line;
@@ -44,7 +46,9 @@ public class WordleDictionaryLoader {
             }
         }
 
-        if (wordleDictionary.isEmpty()) throw new SystemException("Словарь пуст");
+        if (wordleDictionary.isEmpty()) {
+            throw new SystemException("Словарь пуст");
+        }
 
         return wordleDictionary;
     }

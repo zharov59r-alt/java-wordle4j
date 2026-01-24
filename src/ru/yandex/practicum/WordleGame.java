@@ -97,7 +97,9 @@ public class WordleGame {
     }
 
     public String getHint() {
-        if (wordsForHints.isEmpty()) return dictionary.get(0);
+        if (wordsForHints.isEmpty()) {
+            return dictionary.get(0);
+        }
         return wordsForHints.get(0);
     }
 
