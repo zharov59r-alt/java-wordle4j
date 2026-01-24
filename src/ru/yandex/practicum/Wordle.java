@@ -38,13 +38,18 @@ public class Wordle {
                             input = wordleGame.getHint();
                             System.out.println(input);
                         } else {
-                            if (input.length() != 5) throw new GameException("Слово должно состоять из пяти букв");
-                            if (!input.matches("^[а-яА-ЯёЁ]+$"))
+                            if (input.length() != 5) {
+                                throw new GameException("Слово должно состоять из пяти букв");
+                            }
+                            if (!input.matches("^[а-яА-ЯёЁ]+$")) {
                                 throw new GameException("Слово должно состоять из букв русского языка");
-                            if (!wordleGame.checkWordExistsInDictionary(input))
+                            }
+                            if (!wordleGame.checkWordExistsInDictionary(input)) {
                                 throw new GameException("Введенное слово отсутствует в словаре");
-                            if (wordleGame.checkWordHasAlreadyBeen(input))
+                            }
+                            if (wordleGame.checkWordHasAlreadyBeen(input)) {
                                 throw new GameException("Введенное слово уже было");
+                            }
                         }
 
                         wordleGame.setAnswer(input);
